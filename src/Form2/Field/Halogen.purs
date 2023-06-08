@@ -1,4 +1,4 @@
-module Form2.Field.Halogen
+module Formlet.Field.Halogen
   ( Input
   , Query(..)
   , Slot
@@ -11,8 +11,8 @@ import CitizenNet.Prelude
 import Data.Bifunctor as Data.Bifunctor
 import Data.Monoid as Data.Monoid
 import Effect.Aff as Effect.Aff
-import Form2 as Form2
-import Form2.Render.List as Form2.Render.List
+import Formlet as Formlet
+import Formlet.Render.List as Formlet.Render.List
 import Halogen as Halogen
 
 data Action m output slots
@@ -20,28 +20,28 @@ data Action m output slots
   | HandleReceive (Input m output slots)
 
 type Input m output slots =
-  { errors :: Maybe Form2.Errors
-  , render :: Maybe Form2.Errors -> Halogen.ComponentHTML output (Slots output slots) m
+  { errors :: Maybe Formlet.Errors
+  , render :: Maybe Formlet.Errors -> Halogen.ComponentHTML output (Slots output slots) m
   }
 
 type Slot output =
   Halogen.Slot Query output
 
 type Slots output slots =
-  ( field :: Slot output Form2.Render.List.Key
+  ( field :: Slot output Formlet.Render.List.Key
   | slots
   )
 
 type State m output slots =
-  { errors :: Maybe Form2.Errors
-  , render :: Maybe Form2.Errors -> Halogen.ComponentHTML output (Slots output slots) m
+  { errors :: Maybe Formlet.Errors
+  , render :: Maybe Formlet.Errors -> Halogen.ComponentHTML output (Slots output slots) m
   , touched :: Boolean
   }
 
 data Query a
   = ClearErrors a
   | DisplayErrors a
-  | GetErrors (Form2.Errors -> a)
+  | GetErrors (Formlet.Errors -> a)
 
 -- This component serves two main purposes:
 --

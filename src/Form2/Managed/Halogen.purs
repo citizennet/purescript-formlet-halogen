@@ -1,4 +1,4 @@
-module Form2.Managed.Halogen
+module Formlet.Managed.Halogen
   ( Component
   , Input
   , Output
@@ -11,8 +11,8 @@ module Form2.Managed.Halogen
 import CitizenNet.Prelude
 
 import Data.Bifunctor as Data.Bifunctor
-import Form2 as Form2
-import Form2.Field.Halogen as Form2.Field.Halogen
+import Formlet as Formlet
+import Formlet.Field.Halogen as Formlet.Field.Halogen
 import Halogen as Halogen
 
 data Action config m value
@@ -33,7 +33,7 @@ type Output value =
 data Query value result a
   = ClearErrors a
   | DisplayErrors a
-  | GetErrors (Form2.Errors -> a)
+  | GetErrors (Formlet.Errors -> a)
   | GetValue (value -> a)
   | SetValue value a
   | Validate (Either (Array String) result -> a)
@@ -42,7 +42,7 @@ type Slot value result =
   Halogen.Slot (Query value result) (Output value)
 
 type Slots m value slots =
-  Form2.Field.Halogen.Slots (m (value -> value)) slots
+  Formlet.Field.Halogen.Slots (m (value -> value)) slots
 
 type State config render (m :: Type -> Type) value =
   { config :: config
@@ -57,7 +57,7 @@ component ::
   forall slots config render m value result.
   Functor render =>
   MonadAff m =>
-  Form2.Form config render m value result ->
+  Formlet.Form config render m value result ->
   (config -> render (m (value -> value)) -> Halogen.ComponentHTML (m (value -> value)) (Slots m value slots) m) ->
   Component config m value result
 component form renderForm =
@@ -71,7 +71,7 @@ component form renderForm =
             }
     , initialState:
         \{ config, initialValue } ->
-          { render: Form2.render form config initialValue
+          { render: Formlet.render form config initialValue
           , config
           , value: initialValue
           }
@@ -82,37 +82,37 @@ handleAction ::
   forall slots config render m value result.
   Functor render =>
   MonadAff m =>
-  Form2.Form config render m value result ->
+  Formlet.Form config render m value result ->
   Action config m value ->
   Halogen.HalogenM (State config render m value) (Action config m value) (Slots m value slots) (Output value) m Unit
 handleAction form = case _ of
   ReceiveConfig config -> do
-    Halogen.modify_ \state -> state { render = Form2.render form config state.value, config = config }
+    Halogen.modify_ \state -> state { render = Formlet.render form config state.value, config = config }
   UpdateValue getUpdate -> do
     update <- Halogen.lift getUpdate
     Halogen.modify_ \state ->
       let
         value' = update state.value
       in
-        state { render = Form2.render form state.config value', value = value' }
+        state { render = Formlet.render form state.config value', value = value' }
     Halogen.raise update
 
 handleQuery ::
   forall slots config render m value result a.
   MonadAff m =>
   Functor render =>
-  Form2.Form config render m value result ->
+  Formlet.Form config render m value result ->
   Query value result a ->
   Halogen.HalogenM (State config render m value) (Action config m value) (Slots m value slots) (Output value) m (Maybe a)
 handleQuery form = case _ of
   ClearErrors done -> do
-    _ <- Halogen.queryAll (Proxy :: Proxy "field") (Form2.Field.Halogen.ClearErrors unit)
+    _ <- Halogen.queryAll (Proxy :: Proxy "field") (Formlet.Field.Halogen.ClearErrors unit)
     pure $ Just done
   DisplayErrors done -> do
-    _ <- Halogen.queryAll (Proxy :: Proxy "field") (Form2.Field.Halogen.DisplayErrors unit)
+    _ <- Halogen.queryAll (Proxy :: Proxy "field") (Formlet.Field.Halogen.DisplayErrors unit)
     pure $ Just done
   GetErrors done -> do
-    results <- Halogen.queryAll (Proxy :: Proxy "field") (Form2.Field.Halogen.GetErrors identity)
+    results <- Halogen.queryAll (Proxy :: Proxy "field") (Formlet.Field.Halogen.GetErrors identity)
     pure $ Just (done (fold results))
   GetValue done -> do
     { value } <- Halogen.get
@@ -120,14 +120,14 @@ handleQuery form = case _ of
   SetValue value done -> do
     Halogen.modify_ \state ->
       state
-        { render = Form2.render form state.config value
+        { render = Formlet.render form state.config value
         , value = value
         }
     pure $ Just done
   Validate done -> do
-    _ <- Halogen.queryAll (Proxy :: Proxy "field") (Form2.Field.Halogen.DisplayErrors unit)
+    _ <- Halogen.queryAll (Proxy :: Proxy "field") (Formlet.Field.Halogen.DisplayErrors unit)
     { config, value } <- Halogen.get
-    pure $ Just (done (Form2.validate form config value))
+    pure $ Just (done (Formlet.validate form config value))
 
 render ::
   forall slots config render m value.

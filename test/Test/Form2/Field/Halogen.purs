@@ -1,4 +1,4 @@
-module Test.Form2.Field.Halogen
+module Test.Formlet.Field.Halogen
   ( suite
   ) where
 
@@ -6,8 +6,8 @@ import CitizenNet.Prelude
 
 import Debug as Debug
 import Effect.Aff as Effect.Aff
-import Form2 as Form2
-import Form2.Field.Halogen as Form2.Field.Halogen
+import Formlet as Formlet
+import Formlet.Field.Halogen as Formlet.Field.Halogen
 import Halogen as Halogen
 import Halogen.HTML as Halogen.HTML
 import Halogen.Subscription as Halogen.Subscription
@@ -18,12 +18,12 @@ import Test.Utils as Test.Utils
 
 suite :: Test.Unit.TestSuite
 suite =
-  Test.Unit.suite "Form2.Field.Halogen" do
+  Test.Unit.suite "Formlet.Field.Halogen" do
     Test.Unit.test "An output in the child render should trigger displaying validation errors" do
       { emitter, listener } <- liftEffect Halogen.Subscription.create
       { emitter: testEmitter, listener: testListener } <- liftEffect Halogen.Subscription.create
       let
-        errors :: Form2.Errors
+        errors :: Formlet.Errors
         errors = [ "Some errors" ]
       -- In this test we use a Halogen subscription to send an `Aff` test
       -- inside a component's rendering context. This way we can have access to
@@ -39,7 +39,7 @@ suite =
                 Halogen.raise
             , Halogen.Test.Subscription.subscribe
                 ( map (_ $ mErrors)
-                    (testEmitter :: Halogen.Subscription.Emitter (Maybe Form2.Errors -> Aff Unit))
+                    (testEmitter :: Halogen.Subscription.Emitter (Maybe Formlet.Errors -> Aff Unit))
                 )
                 liftAff
             ]
@@ -48,14 +48,14 @@ suite =
       -- Here we issue an event to `listener`, causing field to be touched.
       liftEffect $ Halogen.Subscription.notify listener unit
       -- We need some delay here to wait for the delay in
-      -- `Form2.Field.Halogen`'s handling of child outputs.
+      -- `Formlet.Field.Halogen`'s handling of child outputs.
       Effect.Aff.delay (Effect.Aff.Milliseconds 50.0)
       -- Validation errors should be rendered now that the field is touched.
       testInListener testListener (Just errors)
-    Test.Unit.test "`ClearErrors` query should clear errors on all child `Form2.Field.Halogen` components" do
+    Test.Unit.test "`ClearErrors` query should clear errors on all child `Formlet.Field.Halogen` components" do
       { emitter, listener } <- liftEffect Halogen.Subscription.create
       let
-        errors :: Form2.Errors
+        errors :: Formlet.Errors
         errors = [ "Some errors" ]
       -- In this test we use a Halogen subscription to send an `Aff` test
       -- inside a component's rendering context. This way we can have access to
@@ -64,21 +64,21 @@ suite =
       io <-
         runTestFieldUI errors \mErrors ->
           Halogen.Test.Subscription.subscribe
-            (map (_ $ mErrors) (emitter :: Halogen.Subscription.Emitter (Maybe Form2.Errors -> Aff Unit)))
+            (map (_ $ mErrors) (emitter :: Halogen.Subscription.Emitter (Maybe Formlet.Errors -> Aff Unit)))
             liftAff
       -- We want to test whether `ClearErrors` really hides any validation
       -- errors, so first we must display them.
-      _ <- io.query (Form2.Field.Halogen.DisplayErrors unit)
+      _ <- io.query (Formlet.Field.Halogen.DisplayErrors unit)
       -- We check whether they're visible before we clear them.
       testInListener listener (Just errors)
-      _ <- io.query (Form2.Field.Halogen.ClearErrors unit)
+      _ <- io.query (Formlet.Field.Halogen.ClearErrors unit)
       -- Validation errors should be rendered now that the `ClearErrors` query
       -- was issued and the field is now considered being untouched.
       testInListener listener Nothing
-    Test.Unit.test "`DisplayErrors` query should display errors on all child `Form2.Field.Halogen` components" do
+    Test.Unit.test "`DisplayErrors` query should display errors on all child `Formlet.Field.Halogen` components" do
       { emitter, listener } <- liftEffect Halogen.Subscription.create
       let
-        errors :: Form2.Errors
+        errors :: Formlet.Errors
         errors = [ "Some errors" ]
       -- In this test we use a Halogen subscription to send an `Aff` test
       -- inside a component's rendering context. This way we can have access to
@@ -87,32 +87,32 @@ suite =
       io <-
         runTestFieldUI errors \mErrors ->
           Halogen.Test.Subscription.subscribe
-            (map (_ $ mErrors) (emitter :: Halogen.Subscription.Emitter (Maybe Form2.Errors -> Aff Unit)))
+            (map (_ $ mErrors) (emitter :: Halogen.Subscription.Emitter (Maybe Formlet.Errors -> Aff Unit)))
             liftAff
       -- When a field is first initialized, no validation errors should be
       -- rendered.
       testInListener listener Nothing
-      _ <- io.query (Form2.Field.Halogen.DisplayErrors unit)
+      _ <- io.query (Formlet.Field.Halogen.DisplayErrors unit)
       -- Validation errors should be rendered now that the `DisplayErrors` query
       -- was issued and the field is now considered being touched.
       testInListener listener (Just errors)
 
 runTestFieldUI ::
   forall output slots.
-  Form2.Errors ->
-  (Maybe Form2.Errors -> Halogen.ComponentHTML output (Form2.Field.Halogen.Slots output slots) Aff) ->
-  Aff (Halogen.HalogenIO Form2.Field.Halogen.Query output Aff)
+  Formlet.Errors ->
+  (Maybe Formlet.Errors -> Halogen.ComponentHTML output (Formlet.Field.Halogen.Slots output slots) Aff) ->
+  Aff (Halogen.HalogenIO Formlet.Field.Halogen.Query output Aff)
 runTestFieldUI errors render =
   Halogen.Test.Driver.runUI
     { duplicateSlot: mempty }
-    Form2.Field.Halogen.component
+    Formlet.Field.Halogen.component
     { errors: Just errors
     , render:
         \_ ->
           Halogen.HTML.slot
             (Proxy :: Proxy "field")
             "someFieldKey"
-            Form2.Field.Halogen.component
+            Formlet.Field.Halogen.component
             { errors: Just errors
             , render: render
             }

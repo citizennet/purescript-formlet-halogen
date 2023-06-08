@@ -1,4 +1,4 @@
-module Form2.Render.Forest.Halogen
+module Formlet.Render.Forest.Halogen
   ( render
   ) where
 
@@ -6,9 +6,9 @@ import CitizenNet.Prelude
 
 import Data.Array as Data.Array
 import Data.Functor.Variant as Data.Functor.Variant
-import Form2.Render.Forest as Form2.Render.Forest
-import Form2.Render.Halogen as Form2.Render.Halogen
-import Form2.Render.List as Form2.Render.List
+import Formlet.Render.Forest as Formlet.Render.Forest
+import Formlet.Render.Halogen as Formlet.Render.Halogen
+import Formlet.Render.List as Formlet.Render.List
 import Halogen as Halogen
 import Halogen.HTML as Halogen.HTML
 import Halogen.HTML.Elements.Keyed as Halogen.HTML.Elements.Keyed
@@ -19,12 +19,12 @@ import Halogen.HTML.Elements.Keyed as Halogen.HTML.Elements.Keyed
 render ::
   forall slots config options renders m action.
   MonadAff m =>
-  (Form2.Render.List.Key -> config -> Option options -> Array (Halogen.ComponentHTML action slots m) -> Halogen.ComponentHTML action slots m) ->
-  (Form2.Render.List.Key -> config -> Data.Functor.Variant.VariantF renders action -> Array (Halogen.ComponentHTML action slots m)) ->
+  (Formlet.Render.List.Key -> config -> Option options -> Array (Halogen.ComponentHTML action slots m) -> Halogen.ComponentHTML action slots m) ->
+  (Formlet.Render.List.Key -> config -> Data.Functor.Variant.VariantF renders action -> Array (Halogen.ComponentHTML action slots m)) ->
   config ->
-  Form2.Render.Forest.Forest options renders action ->
+  Formlet.Render.Forest.Forest options renders action ->
   Halogen.ComponentHTML action slots m
-render renderOptions renderElement config (Form2.Render.List.List list) =
+render renderOptions renderElement config (Formlet.Render.List.List list) =
   case Data.Array.uncons list of
     Nothing -> Halogen.HTML.text ""
     Just { head: { key, render: render' }, tail: [] } -> go key render'
@@ -34,16 +34,16 @@ render renderOptions renderElement config (Form2.Render.List.List list) =
         $ list
   where
   go ::
-    Form2.Render.List.Key ->
-    Form2.Render.Forest.Tree options renders action ->
+    Formlet.Render.List.Key ->
+    Formlet.Render.Forest.Tree options renders action ->
     Halogen.ComponentHTML action slots m
   go key = case _ of
-    Form2.Render.Forest.Leaf l -> Form2.Render.Halogen.render (renderOptions key) (renderElement key) config l
-    Form2.Render.Forest.Node n ->
-      -- We don't just call `Form2.Render.List.Halogen.render` here because that
+    Formlet.Render.Forest.Leaf l -> Formlet.Render.Halogen.render (renderOptions key) (renderElement key) config l
+    Formlet.Render.Forest.Node n ->
+      -- We don't just call `Formlet.Render.List.Halogen.render` here because that
       -- render function is suited only for the top-level of forms, as it only
       -- wraps the list in a HTML container, and does not apply any render
       -- `options` as we do here.
       renderOptions key config n.options
         $ map (\{ key: key', render: render' } -> go key' render')
-        $ un Form2.Render.List.List n.children
+        $ un Formlet.Render.List.List n.children
