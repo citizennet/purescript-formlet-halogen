@@ -11,7 +11,6 @@ in
       [ "aff"
       , "arrays"
       , "bifunctors"
-      , "cn-debug"
       , "const"
       , "formlet"
       , "halogen"
@@ -20,7 +19,6 @@ in
       , "pre"
       , "prelude"
       , "test-unit"
-      , "test-utils"
       , "variant"
       ]
   , packages = ../../packages.dhall

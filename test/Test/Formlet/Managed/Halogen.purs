@@ -5,7 +5,6 @@ module Test.Formlet.Managed.Halogen
 import CitizenNet.Prelude
 
 import Data.Const as Data.Const
-import Debug as Debug
 import Formlet as Formlet
 import Formlet.Field.Halogen as Formlet.Field.Halogen
 import Formlet.Managed.Halogen as Formlet.Managed.Halogen
@@ -17,7 +16,7 @@ import Halogen.Subscription as Halogen.Subscription
 import Halogen.Test.Driver as Halogen.Test.Driver
 import Halogen.Test.Subscription as Halogen.Test.Subscription
 import Test.Unit as Test.Unit
-import Test.Utils as Test.Utils
+import Test.Unit.Assert as Test.Unit.Assert
 
 suite :: Test.Unit.TestSuite
 suite =
@@ -175,7 +174,7 @@ suite =
           , initialValue: ""
           }
       actual <- io.query (Formlet.Managed.Halogen.Validate identity)
-      Test.Utils.equal (Just (Left [ "Invalid" ])) actual
+      Test.Unit.Assert.equal (Just (Left [ "Invalid" ])) actual
       io' <-
         Halogen.Test.Driver.runUI
           { duplicateSlot: mempty }
@@ -184,7 +183,7 @@ suite =
           , initialValue: "Test"
           }
       actual' <- io'.query (Formlet.Managed.Halogen.Validate identity)
-      Test.Utils.equal (Just (Right "Test")) actual'
+      Test.Unit.Assert.equal (Just (Right "Test")) actual'
     Test.Unit.test "`Validate` query should display errors on all child `Formlet.Field.Halogen` components" do
       { emitter, listener } <- liftEffect Halogen.Subscription.create
       let
@@ -242,21 +241,21 @@ constForm = Formlet.form_ \_ -> Data.Const.Const
 testInListener ::
   forall value.
   Eq value =>
-  Debug.Debug value =>
+  Show value =>
   Halogen.Subscription.Listener (value -> Aff Unit) ->
   value ->
   Aff Unit
-testInListener listener = liftEffect <<< Halogen.Subscription.notify listener <<< Test.Utils.equal
+testInListener listener = liftEffect <<< Halogen.Subscription.notify listener <<< Test.Unit.Assert.equal
 
 -- | Utility function for testing the internal value of a
 -- | `Formlet.Managed.Halogen` component.
 testValue ::
   forall output result value.
   Eq value =>
-  Debug.Debug value =>
+  Show value =>
   Halogen.HalogenIO (Formlet.Managed.Halogen.Query value result) output Aff ->
   value ->
   Aff Unit
 testValue io expected = do
   actual <- io.query (Formlet.Managed.Halogen.GetValue identity)
-  Test.Utils.equal (Just expected) actual
+  Test.Unit.Assert.equal (Just expected) actual

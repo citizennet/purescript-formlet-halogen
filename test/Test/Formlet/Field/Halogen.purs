@@ -4,7 +4,6 @@ module Test.Formlet.Field.Halogen
 
 import CitizenNet.Prelude
 
-import Debug as Debug
 import Effect.Aff as Effect.Aff
 import Formlet as Formlet
 import Formlet.Field.Halogen as Formlet.Field.Halogen
@@ -14,7 +13,7 @@ import Halogen.Subscription as Halogen.Subscription
 import Halogen.Test.Driver as Halogen.Test.Driver
 import Halogen.Test.Subscription as Halogen.Test.Subscription
 import Test.Unit as Test.Unit
-import Test.Utils as Test.Utils
+import Test.Unit.Assert as Test.Unit.Assert
 
 suite :: Test.Unit.TestSuite
 suite =
@@ -125,8 +124,8 @@ runTestFieldUI errors render =
 testInListener ::
   forall value.
   Eq value =>
-  Debug.Debug value =>
+  Show value =>
   Halogen.Subscription.Listener (value -> Aff Unit) ->
   value ->
   Aff Unit
-testInListener listener = liftEffect <<< Halogen.Subscription.notify listener <<< Test.Utils.equal
+testInListener listener = liftEffect <<< Halogen.Subscription.notify listener <<< Test.Unit.Assert.equal

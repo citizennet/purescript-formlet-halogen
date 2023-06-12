@@ -14,8 +14,8 @@ import Halogen.Test.Driver as Halogen.Test.Driver
 import Test.Formlet.Field.Halogen as Test.Formlet.Field.Halogen
 import Test.Formlet.Managed.Halogen as Test.Formlet.Managed.Halogen
 import Test.Unit as Test.Unit
+import Test.Unit.Assert as Test.Unit.Assert
 import Test.Unit.Main as Test.Unit.Main
-import Test.Utils as Test.Utils
 
 main :: Effect Unit
 main =
@@ -48,7 +48,7 @@ suite =
           , value: ""
           }
       actual <- io.query (Formlet.Halogen.Validate identity)
-      Test.Utils.equal (Just (Left [ "Invalid" ])) actual
+      Test.Unit.Assert.equal (Just (Left [ "Invalid" ])) actual
       io' <-
         Halogen.Test.Driver.runUI
           { duplicateSlot: mempty }
@@ -57,4 +57,4 @@ suite =
           , value: "Test"
           }
       actual' <- io'.query (Formlet.Halogen.Validate identity)
-      Test.Utils.equal (Just (Right "Test")) actual'
+      Test.Unit.Assert.equal (Just (Right "Test")) actual'
