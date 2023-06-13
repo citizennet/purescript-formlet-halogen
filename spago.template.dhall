@@ -1,4 +1,6 @@
 {-
+{{GENERATED_DOC}}
+
 The `formlet-halogen` package contains Halogen-specific implementations for the `formlet`
 abstractions. This includes components for rendering forms and functions for
 transforming render functors into Halogen HTML.
@@ -21,8 +23,9 @@ in
       , "test-unit"
       , "variant"
       ]
-  , packages = ../../packages.dhall
-  -- Due to a spago bug (see https://github.com/purescript/spago/issues/648)
-  -- `sources` are relative to root instead of config file.
-  , sources = [ "lib/${name}/src/**/*.purs", "lib/${name}/test/**/*.purs" ]
+  -- This path is relative to config file
+  , packages = {{PACKAGES_DIR}}/packages.dhall
+  -- This path is relative to project root
+  -- See https://github.com/purescript/spago/issues/648
+  , sources = [ "{{SOURCES_DIR}}/src/**/*.purs", "{{SOURCES_DIR}}/test/**/*.purs" ]
   }
