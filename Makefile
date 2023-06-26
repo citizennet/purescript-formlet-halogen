@@ -7,7 +7,7 @@
 #
 # We also want some place to store all the excess build artifacts.
 # This might be test outputs, or it could be some intermediate artifacts.
-# For this, we use the `$(FORMLET_HALEGON_BUILD_DIR)` directory.
+# For this, we use the `$(FORMLET_HALOGEN_BUILD_DIR)` directory.
 # Assuming the different tools allow us to put their artifacts in here,
 # we can clean up builds really easily: delete this directory.
 #
@@ -98,6 +98,7 @@ ALL_SRCS += $(FORMLET_HALOGEN_SRCS)
 CLEAN_DEPENDENCIES += clean-formlet-halogen
 FORMAT_DEPENDENCIES += $(FORMLET_HALOGEN_FORMAT_PURS_TIDY_STAMP)
 SPAGO_CONFIGS += $(FORMLET_HALOGEN_SPAGO_CONFIG)
+TEST_DEPENDENCIES += test-formlet-halogen
 
 .DEFAULT_GOAL := build-formlet-halogen
 
