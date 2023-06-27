@@ -130,7 +130,7 @@ let additions =
               , "variant"
               ]
           , repo = "https://github.com/citizennet/purescript-formlet.git"
-          , version = "ab37817682efa140e1486eedad3823bae3465f1b"
+          , version = "072f037ab23d880cd9ba6005501f6958df1bbdc5"
           }
       , halogen-test-driver =
           { dependencies =
@@ -155,7 +155,7 @@ let additions =
               , "tuples"
               ]
           , repo = "https://github.com/citizennet/purescript-halogen-test-driver.git"
-          , version = "f7ada48d7a3c2ea2ecde9e92499b8174bc35b4d2"
+          , version = "d8952bc911fb1cd5603303538277bf65c83e6a69"
           }
       , option =
           { dependencies =
@@ -205,7 +205,7 @@ let additions =
               , "variant"
               ]
           , repo = "https://github.com/citizennet/purescript-prelude.git"
-          , version = "0ab411ff1d8dc58d55085eb92c244a9ca7e0f63c"
+          , version = "e44293a5d05b878cfb822f4a6511f2ba3c1fabac"
           }
       }
 
